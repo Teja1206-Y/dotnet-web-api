@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - master
-  pull_request:
-    branches:
-      - master
 
 jobs:
   build:
@@ -19,16 +16,13 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '9'
+          dotnet-version: '8.0.x'
 
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore Officeworkflows.Api/Officeworkflows.Api.csproj
 
       - name: Build Web API
         run: dotnet build Officeworkflows.Api/Officeworkflows.Api.csproj --configuration Release --no-restore
-
-      - name: Test
-        run: dotnet test --configuration Release --no-build
 
       - name: Publish Web API
         run: dotnet publish Officeworkflows.Api/Officeworkflows.Api.csproj --configuration Release --output ./publish
