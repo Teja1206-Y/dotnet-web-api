@@ -1,0 +1,233 @@
+﻿@page "/register"
+@layout LoginLayout
+
+@using Officeworkflows.Maui.Services
+@inject AuthService AuthService
+@inject NavigationManager Navigation
+@using System.ComponentModel.DataAnnotations
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.Notifications
+@using Syncfusion.Blazor.Buttons
+
+<style>
+    :root {
+        --primary-color: #0078d4;
+        --primary-dark: #106ebe;
+        --light-bg: #f8f9fa;
+    }
+
+    body {
+        background-color: var(--light-bg);
+    }
+
+    .register-container {
+        width: 100%;
+        max-width: 440px;
+        background-color: #ffffff;
+        border: 1px solid #d2d0ce;
+        border-radius: 8px;
+        margin: 80px auto;
+        padding: 40px 30px;
+        box-shadow: 0 2.8px 2.2px rgba(0, 0, 0, 0.02), 0 6.7px 5.3px rgba(0, 0, 0, 0.028), 0 12.5px 10px rgba(0, 0, 0, 0.035);
+    }
+
+    .register-header {
+        text-align: center;
+        margin-bottom: 32px;
+    }
+
+        .register-header h2 {
+            color: var(--primary-color);
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .register-header p {
+            color: #605e5c;
+            font-size: 14px;
+        }
+
+    .input-group {
+        position: relative;
+        margin-bottom: 20px;
+    }
+
+    .input-icon {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #605e5c;
+        font-size: 16px;
+        z-index: 10;
+    }
+
+    .syncfusion-input {
+        width: 100%;
+        padding-left: 40px !important;
+    }
+
+    .validation-error {
+        color: #d13438;
+        font-size: 12px;
+        margin-top: 4px;
+        display: block;
+    }
+
+    .btn-register {
+        width: 100%;
+        height: 44px;
+        background-color: var(--primary-color);
+        color: white;
+        font-size: 15px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        border-radius: 6px;
+    }
+
+        .btn-register:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-register:disabled {
+            background-color: #a0a0a0;
+            cursor: not-allowed;
+        }
+
+    .footer-link {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 14px;
+        color: #605e5c;
+    }
+
+        .footer-link a {
+            color: var(--primary-color);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+            .footer-link a:hover {
+                text-decoration: underline;
+            }
+</style>
+
+@if (isLoading)
+{
+    <LoadingPage Message="Creating your account..." />
+}
+else
+{
+    <div class="register-container">
+        <div class="register-header">
+            <h2><i class="fas fa-building" style="margin-right:8px;"></i>Office Workflows</h2>
+            <p>Create your account</p>
+        </div>
+
+        <EditForm Model="registerModel" OnValidSubmit="RegisterUser">
+            <DataAnnotationsValidator />
+
+            <style>
+                /* ✅ Fix cursor alignment inside Syncfusion TextBox */
+                .e-input-group input.e-input,
+                .e-float-input input.e-input {
+                    padding-left: 0.75rem !important; /* start near left edge */
+                    text-indent: 0 !important;
+                    text-align: left !important;
+                }
+
+                /* ✅ Ensure placeholder starts from left edge too */
+                .e-input-group input::placeholder,
+                .e-float-input input::placeholder {
+                    text-align: left !important;
+                    padding-left: 0 !important;
+                }
+
+                /* ✅ Adjust icon position and remove double spacing */
+                .input-group .input-icon {
+                    left: 10px;
+                }
+
+                /* ✅ Ensure input spacing around icons feels right */
+                .syncfusion-input {
+                    width: 100%;
+                    padding-left: 35px !important; /* aligns text & icon perfectly */
+                }
+
+                /* Optional: tighter focus look */
+                .e-input-group:not(.e-disabled) .e-input:focus {
+                    box-shadow: 0 0 0 1px #0078d4 !important;
+                }
+            </style>
+
+
+
+
+            <!-- Full Name -->
+            <div class="input-group">
+                <i class="fas fa-user input-icon"></i>
+                <SfTextBox @bind-Value="registerModel.FullName" Placeholder="Full Name" CssClass="syncfusion-input"></SfTextBox>
+                <ValidationMessage For="@(() => registerModel.FullName)" class="validation-error" />
+            </div>
+
+            <!-- Email -->
+            <div class="input-group">
+                <i class="fas fa-envelope input-icon"></i>
+                <SfTextBox @bind-Value="registerModel.Email" Placeholder="Email" CssClass="syncfusion-input" InputType="InputType.Email"></SfTextBox>
+                <ValidationMessage For="@(() => registerModel.Email)" class="validation-error" />
+            </div>
+
+            <!-- Password -->
+            <div class="input-group">
+                <i class="fas fa-lock input-icon"></i>
+                <SfTextBox @bind-Value="registerModel.Password" Placeholder="Password" CssClass="syncfusion-input"
+                           InputType="@(showPassword? InputType.Text: InputType.Password)"></SfTextBox>
+                <button type="button"
+                        style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #605e5c;"
+                        @onclick="TogglePasswordVisibility">
+                    <i class="@(showPassword ? "fas fa-eye-slash" : "fas fa-eye")"></i>
+                </button>
+                <ValidationMessage For="@(() => registerModel.Password)" class="validation-error" />
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="input-group">
+                <i class="fas fa-lock input-icon"></i>
+                <SfTextBox @bind-Value="registerModel.ConfirmPassword" Placeholder="Confirm Password" CssClass="syncfusion-input"
+                           InputType="@(showConfirmPassword? InputType.Text: InputType.Password)"></SfTextBox>
+                <button type="button"
+                        style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #605e5c;"
+                        @onclick="ToggleConfirmPasswordVisibility">
+                    <i class="@(showConfirmPassword ? "fas fa-eye-slash" : "fas fa-eye")"></i>
+                </button>
+                <ValidationMessage For="@(() => registerModel.ConfirmPassword)" class="validation-error" />
+            </div>
+
+            <button type="submit" class="btn-register" disabled="@isLoading">
+                <i class="fas fa-user-plus" style="margin-right:8px;"></i>
+                Register
+            </button>
+        </EditForm>
+
+        <!-- ✅ Fixed Toast -->
+        <SfToast @ref="Toast" Width="400px" Timeout="4000">
+            <ToastPosition X="Center" Y="Top"></ToastPosition>
+            <ToastTemplates>
+                <Template>
+                    <div class="e-toast-template">
+                        <i class="fas @(toastType == "success" ? "fa-check-circle" : "fa-exclamation-circle")"
+                           style="margin-right:8px;"></i>
+                        @toastMessage
+                    </div>
+                </Template>
+            </ToastTemplates>
+        </SfToast>
+
+        <div class="footer-link">
+            Already have an account? <a href="/login">Sign in</a>
+        </div>
+    </div>
+}

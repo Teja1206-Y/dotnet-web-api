@@ -1,0 +1,277 @@
+﻿@page "/holidays"
+@layout MainLayout
+
+@using Officeworkflows.Maui.Models
+@inject HttpClient Http
+@inject NavigationManager Navigation
+
+<style>
+    :root {
+        --primary-color: #0078d4;
+        --primary-dark: #106ebe;
+        --light-bg: #f8f9fa;
+    }
+
+    .holiday-container {
+        padding: 24px;
+        background-color: var(--light-bg);
+        min-height: 100vh;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid #d2d0ce;
+    }
+
+    .page-title {
+        font-size: 28px;
+        font-weight: 600;
+        color: #323130;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .back-btn {
+        background-color: #0078d4; /* Office Workflows blue */
+        color: white;
+        border: none;
+        padding: 10px 14px;
+        font-size: 18px;
+        border-radius: 8px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 3px 6px rgba(0,0,0,0.2); /* visible shadow */
+        transition: all 0.2s ease;
+        margin-right: 16px;
+    }
+
+        .back-btn:hover {
+            background-color: #106ebe; /* Darker blue on hover */
+            transform: scale(1.05);
+        }
+
+        .back-btn:active {
+            transform: scale(0.97);
+        }
+
+
+
+    /* ---------- Stats Cards ---------- */
+    .stats-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .stat-card {
+        background: white;
+        border: 1px solid #d2d0ce;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 1.6px 3.6px rgba(0,0,0,0.13);
+    }
+
+    .stat-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 12px;
+        font-size: 18px;
+    }
+
+    .upcoming-holidays .stat-icon {
+        background-color: #e1f5fe;
+        color: #0288d1;
+    }
+
+    .past-holidays .stat-icon {
+        background-color: #f3e5f5;
+        color: #7b1fa2;
+    }
+
+    .next-holiday .stat-icon {
+        background-color: #e8f5e9;
+        color: #2e7d32;
+    }
+
+    .stat-value {
+        font-size: 24px;
+        font-weight: 700;
+        color: #323130;
+    }
+
+    .stat-label {
+        font-size: 14px;
+        color: #605e5c;
+    }
+
+    /* ---------- Schedule ---------- */
+    .schedule-container {
+        background: white;
+        border: 1px solid #d2d0ce;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 24px;
+        box-shadow: 0 1.6px 3.6px rgba(0,0,0,0.13);
+    }
+
+    /* ---------- Upcoming Holidays List ---------- */
+    .holiday-list {
+        background: white;
+        border: 1px solid #d2d0ce;
+        border-radius: 8px;
+        box-shadow: 0 1.6px 3.6px rgba(0,0,0,0.13);
+    }
+
+    .list-header {
+        padding: 16px 20px;
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #d2d0ce;
+        font-weight: 600;
+        color: #323130;
+    }
+
+    .holiday-item {
+        padding: 16px 20px;
+        border-bottom: 1px solid #f3f2f1;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .holiday-item:last-child {
+        border-bottom: none;
+    }
+
+    .holiday-date {
+        width: 60px;
+        height: 60px;
+        background-color: var(--primary-color);
+        color: white;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+    }
+
+    .holiday-day {
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    .holiday-month {
+        font-size: 12px;
+        text-transform: uppercase;
+    }
+
+    .holiday-details {
+        flex: 1;
+    }
+
+    .holiday-name {
+        font-weight: 600;
+        color: #323130;
+    }
+
+    .holiday-days-away {
+        font-size: 12px;
+        color: #605e5c;
+    }
+
+    .current-month {
+        background-color: #eef7ff;
+        border-left: 4px solid var(--primary-color);
+    }
+</style>
+
+
+<div class="holiday-container">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-title">
+            <i class="fas fa-calendar-alt" style="color: #0078d4;"></i>
+            Holiday Calendar
+        </div>
+    </div>
+    <div class="page-header">
+
+        <!-- 🔵 Back Button -->
+        <button class="back-btn" @onclick="GoBack">> Back</button>
+
+
+    </div>
+   
+
+
+
+    <!-- Statistics Cards -->
+    <div class="stats-cards">
+        <div class="stat-card upcoming-holidays">
+            <div class="stat-icon"><i class="fas fa-gift"></i></div>
+            <div class="stat-value">@UpcomingHolidaysCount</div>
+            <div class="stat-label">Upcoming Holidays</div>
+        </div>
+
+        <div class="stat-card past-holidays">
+            <div class="stat-icon"><i class="fas fa-history"></i></div>
+            <div class="stat-value">@PastHolidaysCount</div>
+            <div class="stat-label">Past Holidays</div>
+        </div>
+
+        <div class="stat-card next-holiday">
+            <div class="stat-icon"><i class="fas fa-star"></i></div>
+            <div class="stat-value">@NextHolidayName</div>
+            <div class="stat-label">Next Holiday</div>
+        </div>
+    </div>
+
+    <!-- Syncfusion Schedule -->
+    <div class="schedule-container">
+        <SfSchedule TValue="HolidayEvent" Height="500px" Width="100%">
+            <ScheduleEventSettings TValue="HolidayEvent" DataSource="@HolidayEvents"></ScheduleEventSettings>
+            <ScheduleViews>
+                <ScheduleView Option="View.Month"></ScheduleView>
+                <ScheduleView Option="View.Week"></ScheduleView>
+                <ScheduleView Option="View.Day"></ScheduleView>
+                <ScheduleView Option="View.Agenda"></ScheduleView>
+            </ScheduleViews>
+        </SfSchedule>
+    </div>
+
+    <!-- Upcoming Holidays -->
+    <div class="holiday-list">
+        <div class="list-header">
+            <i class="fas fa-list" style="margin-right:8px;"></i> Upcoming Holidays
+        </div>
+
+        @foreach (var holiday in UpcomingHolidays)
+        {
+            <div class="holiday-item @(holiday.Date.Month == DateTime.Now.Month ? "current-month" : "")">
+                <div class="holiday-date">
+                    <div class="holiday-day">@holiday.Date.Day</div>
+                    <div class="holiday-month">@holiday.Date.ToString("MMM")</div>
+                </div>
+
+                <div class="holiday-details">
+                    <div class="holiday-name">@holiday.Name</div>
+                    <div class="holiday-days-away">@GetDaysAwayText(holiday.Date)</div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+

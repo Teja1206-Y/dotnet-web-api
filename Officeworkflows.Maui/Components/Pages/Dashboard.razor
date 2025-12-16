@@ -1,0 +1,125 @@
+﻿@page "/dashboard"
+@layout MainLayout
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<div class="dashboard-container">
+
+    <!-- Blue Welcome Panel -->
+    <div class="welcome-banner">
+        <h1>Welcome to the Flow 👋</h1>
+        <p>Manage your tasks, leaves and holidays efficiently</p>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+        <div class="stat-item">
+            <div class="stat-icon tasks"><i class="fas fa-tasks"></i></div>
+            <div class="stat-number">12</div>
+            <div class="stat-label">Pending Tasks</div>
+        </div>
+
+        <div class="stat-item">
+            <div class="stat-icon leave"><i class="fas fa-calendar-check"></i></div>
+            <div class="stat-number">18</div>
+            <div class="stat-label">Leave Days</div>
+        </div>
+
+        <div class="stat-item">
+            <div class="stat-icon holiday"><i class="fas fa-umbrella-beach"></i></div>
+            <div class="stat-number">3</div>
+            <div class="stat-label">Upcoming Holidays</div>
+        </div>
+    </div>
+</div>
+
+
+<style>
+    :root {
+        --primary-color: #0078d4;
+        --primary-dark: #005a9e;
+        --text-primary: #323130;
+        --text-secondary: #605e5c;
+        --border-color: #d0d0d0;
+    }
+
+    .dashboard-container {
+        padding: 28px;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        background-color: #f3f2f1;
+        min-height: 100vh;
+    }
+
+    .welcome-banner {
+        background: linear-gradient(to right, var(--primary-color), var(--primary-dark));
+        padding: 28px 32px;
+        color: white;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+        border-radius: 6px;
+    }
+
+        .welcome-banner h1 {
+            font-size: 26px;
+            font-weight: 600;
+        }
+
+        .welcome-banner p {
+            margin-top: 4px;
+            font-size: 16px;
+            opacity: .9;
+        }
+
+    /* -------- Stats -------- */
+    .stats-row {
+        display: flex;
+        gap: 18px;
+    }
+
+    .stat-item {
+        background: white;
+        border: 1px solid var(--border-color);
+        padding: 18px;
+        flex: 1;
+        text-align: center;
+        box-shadow: 0 3px 6px rgba(0,0,0,0.08);
+    }
+
+    .stat-number {
+        font-size: 22px;
+        font-weight: bold;
+        margin-top: 10px;
+        color: var(--text-primary);
+    }
+
+    .stat-label {
+        font-size: 14px;
+        color: var(--text-secondary);
+    }
+
+    .stat-icon {
+        width: 42px;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: auto;
+    }
+
+        .stat-icon.tasks {
+            background-color: #deecf9;
+            color: #005a9e;
+        }
+
+        .stat-icon.leave {
+            background-color: #e7f4e7;
+            color: #0f6c0f;
+        }
+
+        .stat-icon.holiday {
+            background-color: #f3e8ff;
+            color: #6a1b9a;
+        }
+
+</style>

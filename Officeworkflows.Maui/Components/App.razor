@@ -1,0 +1,12 @@
+﻿<Router AppAssembly="@typeof(App).Assembly">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData"
+                   DefaultLayout="@typeof(Officeworkflows.Maui.Components.Layout.MainLayout)" />
+    </Found>
+
+    <NotFound>
+        <LayoutView Layout="@typeof(Officeworkflows.Maui.Components.Layout.MainLayout)">
+            <h3>❌ Page Not Found</h3>
+        </LayoutView>
+    </NotFound>
+</Router>

@@ -1,0 +1,199 @@
+﻿@inherits LayoutComponentBase
+@inject NavigationManager Navigation
+@inject SecureStorageService SecureStorage
+
+<style>
+    :root {
+        --primary-color: #0078d4;
+        --primary-dark: #005a9e;
+        --surface-color: #ffffff;
+        --border-color: #e5e5e5;
+        --text-primary: #2d2d2d;
+        --nav-height: 60px;
+    }
+
+    .layout-wrapper {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* -------- TOP BAR -------- */
+    .app-bar {
+        height: var(--nav-height);
+        background: var(--surface-color);
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 18px;
+    }
+
+    .app-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--primary-color);
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .menu-btn {
+        background: none;
+        border: none;
+        font-size: 22px;
+        cursor: pointer;
+    }
+
+    /* -------- DRAWER -------- */
+    .drawer {
+        position: fixed;
+        top: 0;
+        left: -260px;
+        width: 260px;
+        height: 100vh;
+        background: var(--surface-color);
+        border-right: 1px solid var(--border-color);
+        transition: left 0.3s ease;
+        padding-top: var(--nav-height);
+        z-index: 999;
+    }
+
+    .drawer.open {
+        left: 0;
+    }
+
+    .drawer-close-btn {
+        position: absolute;
+        right: 10px;
+        top: 15px;
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+    }
+
+    .drawer-item {
+        padding: 14px 22px;
+        font-size: 16px;
+        border-bottom: 1px solid var(--border-color);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .drawer-item:hover {
+        background-color: #f2f2f2;
+    }
+
+    /* -------- CONTENT AREA -------- */
+    .content-area {
+        flex: 1;
+        overflow-y: auto;
+        padding-bottom: 90px !important;
+        padding-top: 10px;
+    }
+
+    /* -------- BOTTOM TABS -------- */
+    .bottom-tabs {
+        height: var(--nav-height);
+        background: var(--surface-color);
+        border-top: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-around;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        z-index: 999;
+    }
+
+    
+
+    .tab {
+        flex: 1;
+        text-align: center;
+        padding: 10px 0;
+        cursor: pointer;
+        background-color: lightblue;
+    }
+
+    .tab.active i {
+        color: var(--primary-color);
+    }
+
+    .tab i {
+        font-size: 20px;
+        color: #666;
+    }
+</style>
+
+<div class="layout-wrapper">
+
+    <!-- 🔵 TOP BAR -->
+    <header class="app-bar">
+        <button class="menu-btn" @onclick="ToggleDrawer">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <div class="app-title">
+            <i class="fas fa-building"></i>
+            Office Workflows
+        </div>
+
+        <button class="menu-btn" @onclick="Logout">
+            <i class="fas fa-sign-out-alt"></i>
+        </button>
+    </header>
+
+    <!-- 🔵 DRAWER -->
+    <aside class="drawer @(isDrawerOpen ? "open" : "")">
+        <button class="drawer-close-btn" @onclick="ToggleDrawer">
+            <i class="fas fa-times"></i>
+        </button>
+
+        <div class="drawer-item" @onclick="@(() => Navigate("/dashboard"))">
+            <i class="fas fa-home"></i> Dashboard
+        </div>
+
+        <div class="drawer-item" @onclick="@(() => Navigate("/assign-task"))">
+            <i class="fas fa-tasks"></i> My Tasks
+        </div>
+
+        <div class="drawer-item" @onclick="@(() => Navigate("/holidays"))">
+            <i class="fas fa-umbrella-beach"></i> Holidays
+        </div>
+
+        <div class="drawer-item" @onclick="@(() => Navigate("/leaves"))">
+            <i class="fas fa-calendar-check"></i> leaves
+        </div>
+    </aside>
+
+    <!-- 🔵 PAGE CONTENT -->
+    <main class="content-area">
+        @Body
+    </main>
+
+    <!-- 🔵 BOTTOM NAV -->
+    <footer class="bottom-tabs">
+        <div class="tab @(IsActive("/dashboard"))" @onclick="@(() => Navigate("/dashboard"))">
+            <i class="fas fa-home"></i>
+        </div>
+
+        <div class="tab @(IsActive("/assign-task"))" @onclick="@(() => Navigate("/assign-task"))">
+            <i class="fas fa-tasks"></i>
+        </div>
+
+        <div class="tab @(IsActive("/holidays"))" @onclick="@(() => Navigate("/holidays"))">
+            <i class="fas fa-umbrella-beach"></i>
+        </div>
+         <div class="tab @(IsActive("/leaves"))"
+         @onclick="@(() => Navigate("/leaves"))">
+        <i class="fas fa-calendar-check"></i>
+    </div>
+
+    </footer>
+
+</div>
+
+

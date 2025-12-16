@@ -1,0 +1,155 @@
+﻿@page "/assign-task"
+@inject HttpClient Http
+@inject NavigationManager Navigation
+
+@using Officeworkflows.Maui.Models.Tasks
+@using System.Net.Http.Json
+
+<style>
+    .page-wrapper {
+        padding: 16px;
+        border-radius: 6px;
+    }
+
+    .page-title {
+        font-size: 22px;
+        font-weight: bold;
+        margin-bottom: 12px;
+        color: #323130;
+    }
+
+    .form-container {
+        background: white;
+        padding: 24px;
+        border: 1px solid #d2d0ce;
+        box-shadow: 0 1.6px 3.6px rgba(0,0,0,0.13);
+        border-radius: 8px;
+    }
+
+    .form-group {
+        margin-bottom: 14px;
+    }
+
+    .input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #d2d0ce;
+        border-radius: 6px;
+        font-size: 14px;
+        box-sizing: border-box;
+    }
+
+    textarea.input {
+        min-height: 90px;
+        resize: vertical;
+    }
+
+    .btn {
+        width: 100%;
+        padding: 14px;
+        background-color: #0078d4;
+        color: white;
+        border: none;
+        font-weight: bold;
+        cursor: pointer;
+        border-radius: 8px;
+    }
+
+    .btn:disabled {
+        background-color: #b4b4b4;
+    }
+
+    .back-btn {
+        background-color: #0078d4;
+        color: white;
+        border: none;
+        padding: 10px 14px;
+        font-size: 16px;
+        border-radius: 8px;
+        margin-bottom: 12px;
+        cursor: pointer;
+    }
+
+    .message {
+        padding: 10px;
+        margin-top: 12px;
+        font-size: 14px;
+        border-left: 4px solid;
+    }
+
+    .success {
+        border-color: green;
+        color: green;
+        background: #e6ffea;
+    }
+
+    .error {
+        border-color: red;
+        color: red;
+        background: #ffeaea;
+    }
+</style>
+
+
+<div class="page-wrapper">
+
+    <button class="back-btn" @onclick="GoBack">> Back</button>
+
+    <div class="page-title">📌 Assign New Task</div>
+
+    <div class="form-container">
+
+        <EditForm Model="@TaskModel" OnValidSubmit="@AssignTaskHandler">
+            <DataAnnotationsValidator />
+
+            <div class="form-group">
+                <InputText @bind-Value="TaskModel.Title" class="input" placeholder="Task Title" />
+                <ValidationMessage For="@(() => TaskModel.Title)" />
+            </div>
+
+            <div class="form-group">
+                <InputTextArea @bind-Value="TaskModel.Description" class="input" placeholder="Task Description" />
+                <ValidationMessage For="@(() => TaskModel.Description)" />
+            </div>
+
+            <div class="form-group">
+                <InputDate @bind-Value="TaskModel.Deadline" class="input" />
+                <ValidationMessage For="@(() => TaskModel.Deadline)" />
+            </div>
+
+            <div class="form-group">
+                <InputSelect @bind-Value="TaskModel.AssignedToUserId" class="input">
+                    <option value="0">Select Employee</option>
+
+                    @foreach (var user in Employees)
+                    {
+                        <option value="@user.Id">@user.FullName (@user.Email)</option>
+                    }
+                </InputSelect>
+            </div>
+
+            <div class="form-group">
+                <InputSelect @bind-Value="TaskModel.Priority" class="input">
+                    <option>Low</option>
+                    <option>Medium</option>
+                    <option>High</option>
+                    <option>Urgent</option>
+                </InputSelect>
+            </div>
+
+            <button class="btn" type="submit" disabled="@isLoading">
+                @(isLoading ? "Assigning..." : "Assign Task")
+            </button>
+        </EditForm>
+
+        @if (!string.IsNullOrEmpty(Message))
+        {
+            <div class="message @(Message.Contains("Success") ? "success" : "error")">
+                @Message
+            </div>
+        }
+
+    </div>
+</div>
+
+

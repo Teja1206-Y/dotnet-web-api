@@ -1,0 +1,32 @@
+using Microsoft.AspNetCore.Components;
+using Officeworkflows.Maui.Services;
+
+namespace Officeworkflows.Maui.Components.Layout {
+    public partial class MainLayout : LayoutComponentBase
+
+{
+    private bool isDrawerOpen = false;
+    private void ToggleDrawer()
+
+{
+    isDrawerOpen = !isDrawerOpen;
+    InvokeAsync(StateHasChanged);
+}
+
+private void Navigate(string url) {
+    Navigation .NavigateTo(url);
+    isDrawerOpen = false;
+    InvokeAsync(StateHasChanged);
+}
+
+private bool IsActive(string route) {
+    return Navigation.Uri.EndsWith(route, StringComparison.OrdinalIgnoreCase);
+}
+
+private async Task Logout() {
+    SecureStorage .ClearToken();
+    Navigation .NavigateTo("/login", true);
+}
+
+}
+}

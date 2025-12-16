@@ -1,0 +1,45 @@
+﻿@inject NavigationManager Navigation
+@inject SecureStorageService SecureStorage
+
+<h3 class="menu-title">Office Workflows</h3>
+
+<nav>
+    <a class="menu-item" href="/dashboard">📊 Dashboard</a>
+    <a class="menu-item" href="/tasks">✅ My Tasks</a>
+    <a class="menu-item" href="/holidays">🎉 Holiday List</a>
+
+    <button class="logout-btn" @onclick="Logout">Logout</button>
+</nav>
+
+<style>
+    .menu-title {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        color: white;
+    }
+
+    .menu-item {
+        display: block;
+        padding: 12px;
+        color: white;
+        text-decoration: none;
+        margin-bottom: 5px;
+    }
+
+        .menu-item:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+            border-radius: 6px;
+        }
+
+    .logout-btn {
+        margin-top: 40px;
+        width: 100%;
+        padding: 10px;
+        border: none;
+        border-radius: 6px;
+        background: #ff3b30;
+        color: white;
+        cursor: pointer;
+    }
+</style>
